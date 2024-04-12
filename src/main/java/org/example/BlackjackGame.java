@@ -61,7 +61,7 @@ public class BlackjackGame extends JFrame {
         playerHand.add(deck.dealCard());
         dealerHand.add(deck.dealCard());
         dealerHand.add(deck.dealCard());
-        dealerLabel.setText("Dealer's Hand: " + dealerHand.get(0) + " and [Hidden]");
+        updateDealerLabel(true);
         playerLabel.setText("Player's Hand: " + playerHand.get(0) + " and " + playerHand.get(1) +
                 " (" + getHandValue(playerHand) + ")");
         statusLabel.setText("Player's turn. Hit or Stand?");
@@ -83,9 +83,10 @@ public class BlackjackGame extends JFrame {
     }
 
     private void playerStands() {
-        dealerLabel.setText("Dealer's Hand: " + dealerHand + " (" + getHandValue(dealerHand) + ")");
+        dealerLabel.setText("Dealer's Hand: " + dealerHand + " (" + getVisibleHandValue(dealerHand) + ")");
         while (getHandValue(dealerHand) < 17) {
             dealerHand.add(deck.dealCard());
+            updateDealerLabel(false);
         }
         if (!isBusted(dealerHand)) {
             statusLabel.setText("Dealer stands.");
@@ -131,6 +132,11 @@ public class BlackjackGame extends JFrame {
         return value;
     }
 
+    private int getVisibleHandValue(List<Card> hand) {
+        List<Card> visibleCards = new ArrayList<>(hand.subList(1, hand.size()));
+        return getHandValue(visibleCards);
+    }
+
     private boolean isBusted(List<Card> hand) {
         return getHandValue(hand) > 21;
     }
@@ -139,6 +145,14 @@ public class BlackjackGame extends JFrame {
         dealButton.setEnabled(enableDealButton);
         hitButton.setEnabled(!enableDealButton);
         standButton.setEnabled(!enableDealButton);
+    }
+
+    private void updateDealerLabel(boolean showHidden) {
+        if (showHidden) {
+            dealerLabel.setText("Dealer's Hand: " + dealerHand.get(0) + " and [Hidden] (" + getHandValue(dealerHand.subList(0, 1)) + ")");
+        } else {
+            dealerLabel.setText("Dealer's Hand: " + dealerHand + " (" + getHandValue(dealerHand) + ")");
+        }
     }
 
     private class DealButtonListener implements ActionListener {
