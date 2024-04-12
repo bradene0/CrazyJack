@@ -53,6 +53,7 @@ public class BlackjackGame extends JFrame {
         updateButtonStatus(true);
     }
 
+    private boolean gameEnded;
     private void deal() {
         deck = new Deck();
         playerHand = new ArrayList<>();
@@ -66,19 +67,20 @@ public class BlackjackGame extends JFrame {
                 " (" + getHandValue(playerHand) + ")");
         statusLabel.setText("Player's turn. Hit or Stand?");
         updateButtonStatus(false);
+        gameEnded = false;
+
+
     }
 
     private void playerHits() {
         playerHand.add(deck.dealCard());
         playerLabel.setText("Player's Hand: " + playerHand + " (" + getHandValue(playerHand) + ")");
         if (isBusted(playerHand)) {
-            statusLabel.setText("Player busts. Dealer wins!");
-            statusLabel.setForeground(Color.RED);
+            gameEnded = true;
             updateButtonStatus(true);
         } else if (getHandValue(playerHand) == 21) {
-            statusLabel.setText("Player gets Blackjack!");
-            statusLabel.setForeground(Color.GREEN);
-            playerStands();
+            gameEnded = true;
+            updateButtonStatus(true);
         }
     }
 
@@ -92,17 +94,21 @@ public class BlackjackGame extends JFrame {
             statusLabel.setText("Dealer stands.");
         }
         playerLabel.setText("Player's Hand: " + playerHand + " (" + getHandValue(playerHand) + ")");
-        if (isBusted(dealerHand) || getHandValue(playerHand) > getHandValue(dealerHand)) {
-            statusLabel.setText("Player wins!");
-            statusLabel.setForeground(Color.GREEN);
-        } else if (getHandValue(playerHand) < getHandValue(dealerHand)) {
-            statusLabel.setText("Dealer wins!");
-            statusLabel.setForeground(Color.RED);
-        } else {
-            statusLabel.setText("It's a tie!");
-            statusLabel.setForeground(Color.YELLOW);
-        }
         updateButtonStatus(true);
+        displayOutcome();
+    }
+
+    private void displayOutcome() {
+        System.out.println("Displaying outcome");
+        String message;
+        if (isBusted(playerHand) || getHandValue(playerHand) < getHandValue(dealerHand)) {
+            message = "Dealer wins! Better luck next time.";
+        } else if (isBusted(dealerHand) || getHandValue(playerHand) > getHandValue(dealerHand)) {
+            message = "Player wins! Congratulations!";
+        } else {
+            message = "It's a tie! Try again.";
+        }
+        JOptionPane.showMessageDialog(this, message);
     }
 
     private int getHandValue(List<Card> hand) {
@@ -146,13 +152,13 @@ public class BlackjackGame extends JFrame {
         hitButton.setEnabled(!enableDealButton);
         standButton.setEnabled(!enableDealButton);
     }
-
     private void updateDealerLabel(boolean showHidden) {
         if (showHidden) {
             dealerLabel.setText("Dealer's Hand: " + dealerHand.get(0) + " and [Hidden] (" + getHandValue(dealerHand.subList(0, 1)) + ")");
         } else {
             dealerLabel.setText("Dealer's Hand: " + dealerHand + " (" + getHandValue(dealerHand) + ")");
         }
+
     }
 
     private class DealButtonListener implements ActionListener {
@@ -167,6 +173,9 @@ public class BlackjackGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             playerHits();
+            if (gameEnded) {
+                displayOutcome();
+            }
         }
     }
 
@@ -174,6 +183,9 @@ public class BlackjackGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             playerStands();
+            if (gameEnded) {
+                displayOutcome();
+            }
         }
     }
 
