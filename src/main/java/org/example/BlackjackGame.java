@@ -83,10 +83,13 @@ public class BlackjackGame extends JFrame {
     }
 
     private void playerStands() {
+        dealerLabel.setText("Dealer's Hand: " + dealerHand + " (" + getHandValue(dealerHand) + ")");
         while (getHandValue(dealerHand) < 17) {
             dealerHand.add(deck.dealCard());
         }
-        dealerLabel.setText("Dealer's Hand: " + dealerHand);
+        if (!isBusted(dealerHand)) {
+            statusLabel.setText("Dealer stands.");
+        }
         playerLabel.setText("Player's Hand: " + playerHand + " (" + getHandValue(playerHand) + ")");
         if (isBusted(dealerHand) || getHandValue(playerHand) > getHandValue(dealerHand)) {
             statusLabel.setText("Player wins!");
@@ -104,12 +107,18 @@ public class BlackjackGame extends JFrame {
     private int getHandValue(List<Card> hand) {
         int value = 0;
         int numAces = 0;
+        boolean firstAce = true;
         for (Card card : hand) {
             String rank = card.getRank();
             if (rank.equals("Jack") || rank.equals("Queen") || rank.equals("King")) {
                 value += 10;
             } else if (rank.equals("Ace")) {
-                value += 11;
+                if (firstAce) {
+                    value += 11;
+                    firstAce = false;
+                } else {
+                    value += 1;
+                }
                 numAces++;
             } else {
                 value += Integer.parseInt(rank);
