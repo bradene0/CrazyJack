@@ -62,17 +62,23 @@ public class BlackjackGame extends JFrame {
         dealerHand.add(deck.dealCard());
         dealerHand.add(deck.dealCard());
         dealerLabel.setText("Dealer's Hand: " + dealerHand.get(0) + " and [Hidden]");
-        playerLabel.setText("Player's Hand: " + playerHand.get(0) + " and " + playerHand.get(1));
+        playerLabel.setText("Player's Hand: " + playerHand.get(0) + " and " + playerHand.get(1) +
+                " (" + getHandValue(playerHand) + ")");
         statusLabel.setText("Player's turn. Hit or Stand?");
         updateButtonStatus(false);
     }
 
     private void playerHits() {
         playerHand.add(deck.dealCard());
-        playerLabel.setText("Player's Hand: " + playerHand);
+        playerLabel.setText("Player's Hand: " + playerHand + " (" + getHandValue(playerHand) + ")");
         if (isBusted(playerHand)) {
             statusLabel.setText("Player busts. Dealer wins!");
+            statusLabel.setForeground(Color.RED);
             updateButtonStatus(true);
+        } else if (getHandValue(playerHand) == 21) {
+            statusLabel.setText("Player gets Blackjack!");
+            statusLabel.setForeground(Color.GREEN);
+            playerStands();
         }
     }
 
@@ -81,12 +87,16 @@ public class BlackjackGame extends JFrame {
             dealerHand.add(deck.dealCard());
         }
         dealerLabel.setText("Dealer's Hand: " + dealerHand);
+        playerLabel.setText("Player's Hand: " + playerHand + " (" + getHandValue(playerHand) + ")");
         if (isBusted(dealerHand) || getHandValue(playerHand) > getHandValue(dealerHand)) {
             statusLabel.setText("Player wins!");
+            statusLabel.setForeground(Color.GREEN);
         } else if (getHandValue(playerHand) < getHandValue(dealerHand)) {
             statusLabel.setText("Dealer wins!");
+            statusLabel.setForeground(Color.RED);
         } else {
             statusLabel.setText("It's a tie!");
+            statusLabel.setForeground(Color.YELLOW);
         }
         updateButtonStatus(true);
     }
@@ -126,6 +136,7 @@ public class BlackjackGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             deal();
+            statusLabel.setForeground(Color.BLACK);
         }
     }
 
