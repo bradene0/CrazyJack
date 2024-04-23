@@ -2,7 +2,7 @@ package org.example;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+//todo add multiple deck selections
 public class Deck {
     private final List<Card> cards;
 
