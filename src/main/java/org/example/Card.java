@@ -1,5 +1,5 @@
 package org.example;
-
+//todo add card designs
 public class Card {
     private final String suit;
     private final String rank;
