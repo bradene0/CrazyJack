@@ -22,9 +22,9 @@ public class Deck {
         if (cards.isEmpty()) {
             throw new IllegalStateException("Deck is empty");
         }
-        else {
-            throw new IllegalStateException("Error, Please try the action again.");
-}
+        //else {
+            //throw new IllegalStateException("Error, Please try the action again.");
+//}
         return cards.remove(0);
     }
 }
